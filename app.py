@@ -30,6 +30,13 @@ if __name__ == "__main__":
             # Append user prompt and response to chat history in order to display conversation history
             st.session_state.chat_history.append(HumanMessage(content=prompt))
             st.session_state.chat_history.append(AIMessage(content=response))
-            st.write(st.session_state.chat_history)
+
 
 	    # Display conversation history
+        for message in st.session_state.chat_history:
+             if isinstance(message, AIMessage):
+                  with st.chat_message("AI"):
+                        st.write(message.content)
+             elif isinstance(message, HumanMessage):
+            	 with st.chat_message("Human"):
+                	st.write(message.content)

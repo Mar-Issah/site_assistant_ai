@@ -10,9 +10,25 @@ from langchain_community.document_loaders import WebBaseLoader
 os.environ.get("HUGGINGFACEHUB_API_TOKEN")
 os.environ.get("OPENAI_API_KEY")
 
+# we will pass the entire convo, the retrieved chunks and the user prompt and tell the llm that based on the the chat history and the chunks retreived complete the users query
+
+
+def scrape_webpage(url):
+   # get the text in document form
+    loader = WebBaseLoader(url)
+    document = loader.load()
+
+    # split the document into chunks
+    text_splitter = RecursiveCharacterTextSplitter()
+    document_chunks = text_splitter.split_documents(document)
+
+    # create a vectorstore from the chunks
+    vector_store = Chroma.from_documents(document_chunks, SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2"))
+    return vector_store
+
 
 def get_website_data(url):
-	return 'hi from bot'
+    return 'hi'
     # retriever_chain = get_context_retriever_chain(st.session_state.vector_store)
     # conversation_rag_chain = get_conversational_rag_chain(retriever_chain)
 
@@ -20,7 +36,7 @@ def get_website_data(url):
     #     "chat_history": st.session_state.chat_history,
     #     "input": user_input
     # })
-    #return response['answer']
+    # return response['answer']
 
 #Function to split data into smaller chunks
 # def split_data(docs):

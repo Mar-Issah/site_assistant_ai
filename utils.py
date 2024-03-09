@@ -10,7 +10,7 @@ os.environ.get("HUGGINGFACEHUB_API_TOKEN")
 os.environ.get("OPENAI_API_KEY")
 
 
-def get_website_data(sitemap_url):
+def get_website_data(url):
 	return 'hi from bot'
     # retriever_chain = get_context_retriever_chain(st.session_state.vector_store)
     # conversation_rag_chain = get_conversational_rag_chain(retriever_chain)

@@ -3,3 +3,4 @@ langchain
 streamlit
 chromadb
 beautifulsoup4
+langchain-community

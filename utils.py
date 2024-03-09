@@ -4,6 +4,7 @@ from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddi
 from langchain_community.vectorstores import Chroma
 from langchain.llms import OpenAI
 from langchain.chains.summarize import load_summarize_chain
+from langchain_community.document_loaders import WebBaseLoader
 
 
 os.environ.get("HUGGINGFACEHUB_API_TOKEN")

@@ -20,12 +20,16 @@ if __name__ == "__main__":
     with st.sidebar:
         st.session_state['URL'] = st.text_input("What's your website URL 🔗", placeholder="https://example.com")
 
-        if st.session_state['URL'] is None or st.session_state['URL'] == "":
-            st.warning("Please enter a website URL")
-        else:
-            messages = st.container()
-            if prompt := st.chat_input("Say something"):
-                st.session_state.chat_history.append(HumanMessage(content=prompt))
-                # st.session_state.chat_history.append(AIMessage(content=response))
+    # Check if URL is empty
+    if st.session_state['URL'] is None or st.session_state['URL'] == "":
+        st.warning("Please enter a website URL!")
+    else:
+        messages = st.container()
+        if prompt := st.chat_input("Say something"):
+            response = get_website_data(prompt)
+            # Append user prompt and response to chat history in order to display conversation history
+            st.session_state.chat_history.append(HumanMessage(content=prompt))
+            st.session_state.chat_history.append(AIMessage(content=response))
+            st.write(st.session_state.chat_history)
 
-    # Display conversation history
+	    # Display conversation history

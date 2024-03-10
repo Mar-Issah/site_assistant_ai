@@ -26,13 +26,20 @@ if __name__ == "__main__":
     else:
         messages = st.container()
         if prompt := st.chat_input("Say something"):
+            # scrape website and save to db
             db = push_to_chroma(st.session_state.URL)
-            with st.sidebar:
-                  st.write(db)
+            # create retriever chain
+            retriever_chain = get_context_retriever_chain(db)
             response = get_website_data(prompt)
-            # Append user prompt and response to chat history in order to display conversation history
+            # Append user prompt and response to chat history
             st.session_state.chat_history.append(HumanMessage(content=prompt))
             st.session_state.chat_history.append(AIMessage(content=response))
+            retrieved_text = retriever_chain.invoke({
+				"chat_history": st.session_state.chat_history,
+				"input": "Tell me how"
+			})
+            with st.sidebar:
+                  st.write(retrieved_text)
 
 
 	    # Display conversation history

@@ -3,8 +3,11 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain.llms import OpenAI
-from langchain.chains.summarize import load_summarize_chain
+from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.document_loaders import WebBaseLoader
+from langchain_openai import  ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 
 os.environ.get("HUGGINGFACEHUB_API_TOKEN")
@@ -26,6 +29,35 @@ def push_to_chroma(url):
     db = Chroma.from_documents(document_chunks, SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2"))
     return db
 
+# MessagesPlaceholder is going to hold all the chat history as and when the chat is ongoing otherwsire it is an empty array.
+# creates a new retriever that fetches the chunk of text relevant to the chat history and user prompt
+def get_context_retriever_chain(vector_store):
+    llm = ChatOpenAI()
+
+    retriever = vector_store.as_retriever()
+
+    prompt = ChatPromptTemplate.from_messages([
+      MessagesPlaceholder(variable_name="chat_history"),
+      ("user", "{input}"),
+      ("user", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation")
+    ])
+	# creating another retriever object based o history and prompt
+    retriever_chain = create_history_aware_retriever(llm, retriever, prompt)
+    return retriever_chain
+
+def get_conversational_rag_chain(retriever_chain):
+
+    llm = ChatOpenAI()
+
+    prompt = ChatPromptTemplate.from_messages([
+      ("system", "Answer the user's questions based on the below context:\n\n{context}"),
+      MessagesPlaceholder(variable_name="chat_history"),
+      ("user", "{input}"),
+    ])
+
+    stuff_documents_chain = create_stuff_documents_chain(llm,prompt)
+
+    return create_retrieval_chain(retriever_chain, stuff_documents_chain)
 
 def get_website_data(url):
     return 'hi'
@@ -38,20 +70,3 @@ def get_website_data(url):
     # })
     # return response['answer']
 
-
-
-# Function to pull data from chroma
-# def pull_from_chroma(query):
-#     db = Chroma(persist_directory="./chroma_db", embedding_function= create_embeddings())
-#     docs = db.similarity_search(query)
-#     return docs
-
-
-# Helps us get the summary of a document
-
-# def get_summary(current_doc):
-#     llm = OpenAI(temperature=0)
-#     #llm = HuggingFaceHub(repo_id="bigscience/bloom", model_kwargs={"temperature":1e-10})
-#     chain = load_summarize_chain(llm, chain_type="map_reduce")
-#     summary = chain.run([current_doc])
-#     return summary

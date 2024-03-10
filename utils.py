@@ -1,4 +1,3 @@
-import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain_community.vectorstores import Chroma
@@ -8,10 +7,9 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_openai import  ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from dotenv import load_dotenv
 
-
-os.environ.get("HUGGINGFACEHUB_API_TOKEN")
-os.environ.get("OPENAI_API_KEY")
+load_dotenv()
 
 # we will pass the entire convo, the retrieved chunks and the user prompt and tell the llm that based on the the chat history and the chunks retreived complete the users query
 
@@ -42,11 +40,13 @@ def get_context_retriever_chain(vector_store):
       ("user", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation")
     ])
 	# creating another retriever object based o history and prompt
+	# once invoked returns the relevant texts
     retriever_chain = create_history_aware_retriever(llm, retriever, prompt)
     return retriever_chain
 
-def get_conversational_rag_chain(retriever_chain):
 
+# final lap which intruct the llm to anwers the user query based on the history, relevant docs and prompt
+def get_conversational_rag_chain(retriever_chain):
     llm = ChatOpenAI()
 
     prompt = ChatPromptTemplate.from_messages([
@@ -56,17 +56,16 @@ def get_conversational_rag_chain(retriever_chain):
     ])
 
     stuff_documents_chain = create_stuff_documents_chain(llm,prompt)
-
     return create_retrieval_chain(retriever_chain, stuff_documents_chain)
 
-def get_website_data(url):
-    return 'hi'
-    # retriever_chain = get_context_retriever_chain(st.session_state.vector_store)
-    # conversation_rag_chain = get_conversational_rag_chain(retriever_chain)
 
-    # response = conversation_rag_chain.invoke({
-    #     "chat_history": st.session_state.chat_history,
-    #     "input": user_input
-    # })
-    # return response['answer']
+def get_website_data(url):
+    retriever_chain = get_context_retriever_chain(st.session_state.vector_store)
+    conversation_rag_chain = get_conversational_rag_chain(retriever_chain)
+
+    response = conversation_rag_chain.invoke({
+        "chat_history": st.session_state.chat_history,
+        "input": user_input
+    })
+    return response['answer']
 

@@ -13,33 +13,32 @@ if __name__ == "__main__":
         st.session_state['chat_history'] = [
             AIMessage(content="Hello, I am a bot. How can I brighten your day?")
         ]
-    if 'URL' not in st.session_state:
-        st.session_state['URL'] = ''
+    if 'vector_store' not in st.session_state:
+        st.session_state['vector_store'] = ''
 
     # ********SIDE BAR*******
     with st.sidebar:
-        st.session_state['URL'] = st.text_input("What's your website URL 🔗", placeholder="https://example.com")
+        website_url = st.text_input("What's your website URL 🔗", placeholder="https://example.com")
 
     # Check if URL is empty
-    if st.session_state['URL'] is None or st.session_state['URL'] == "":
+    if website_url is None or website_url  == "":
         st.warning("Please enter a website URL!")
     else:
         messages = st.container()
         if prompt := st.chat_input("Say something"):
             # scrape website and save to db
-            db = push_to_chroma(st.session_state.URL)
+            st.session_state.vector_store = push_to_chroma(website_url)
             # create retriever chain
-            retriever_chain = get_context_retriever_chain(db)
             response = get_website_data(prompt)
             # Append user prompt and response to chat history
             st.session_state.chat_history.append(HumanMessage(content=prompt))
             st.session_state.chat_history.append(AIMessage(content=response))
-            retrieved_text = retriever_chain.invoke({
-				"chat_history": st.session_state.chat_history,
-				"input": "Tell me how"
-			})
-            with st.sidebar:
-                  st.write(retrieved_text)
+            # retrieved_text = retriever_chain.invoke({
+			# 	"chat_history": st.session_state.chat_history,
+			# 	"input": "Tell me how"
+			# })
+            # with st.sidebar:
+            #       st.write(retrieved_text)
 
 
 	    # Display conversation history

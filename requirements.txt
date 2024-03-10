@@ -5,3 +5,4 @@ chromadb
 beautifulsoup4
 langchain-community
 sentence-transformers
+python-dotenv

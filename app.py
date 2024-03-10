@@ -26,6 +26,9 @@ if __name__ == "__main__":
     else:
         messages = st.container()
         if prompt := st.chat_input("Say something"):
+            db = push_to_chroma(st.session_state.URL)
+            with st.sidebar:
+                  st.write(db)
             response = get_website_data(prompt)
             # Append user prompt and response to chat history in order to display conversation history
             st.session_state.chat_history.append(HumanMessage(content=prompt))

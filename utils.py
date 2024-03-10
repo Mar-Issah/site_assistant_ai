@@ -13,7 +13,7 @@ os.environ.get("OPENAI_API_KEY")
 # we will pass the entire convo, the retrieved chunks and the user prompt and tell the llm that based on the the chat history and the chunks retreived complete the users query
 
 
-def scrape_webpage(url):
+def push_to_chroma(url):
    # get the text in document form
     loader = WebBaseLoader(url)
     document = loader.load()
@@ -23,8 +23,8 @@ def scrape_webpage(url):
     document_chunks = text_splitter.split_documents(document)
 
     # create a vectorstore from the chunks
-    vector_store = Chroma.from_documents(document_chunks, SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2"))
-    return vector_store
+    db = Chroma.from_documents(document_chunks, SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2"))
+    return db
 
 
 def get_website_data(url):
@@ -38,25 +38,7 @@ def get_website_data(url):
     # })
     # return response['answer']
 
-#Function to split data into smaller chunks
-# def split_data(docs):
-#     text_splitter = RecursiveCharacterTextSplitter(
-#     chunk_size = 1000,
-#     chunk_overlap  = 200,
-#     length_function = len,
-#     )
-#     docs_chunks = text_splitter.split_documents(docs)
-#     # print(docs_chunks)
-#     return docs_chunks
 
-#Function to create embeddings instance
-# def create_embeddings():
-#     embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
-#     return embeddings
-
-# Function to push data to Chroma
-# def push_to_chroma(embeddings, chunk_data):
-#     Chroma.from_documents(chunk_data, embeddings, persist_directory="./chroma_db")
 
 # Function to pull data from chroma
 # def pull_from_chroma(query):

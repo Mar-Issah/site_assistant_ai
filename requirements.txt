@@ -4,3 +4,4 @@ streamlit
 chromadb
 beautifulsoup4
 langchain-community
+sentence-transformers

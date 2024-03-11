@@ -8,6 +8,7 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_openai import  ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from dotenv import load_dotenv
+import streamlit as st
 
 load_dotenv()
 
@@ -55,17 +56,18 @@ def get_conversational_rag_chain(retriever_chain):
       ("user", "{input}"),
     ])
 
-    stuff_documents_chain = create_stuff_documents_chain(llm,prompt)
+	# making sure that the prompt fits into the context window of the llm
+    stuff_documents_chain = create_stuff_documents_chain(llm, prompt)
+
     return create_retrieval_chain(retriever_chain, stuff_documents_chain)
 
 
-def get_website_data(url):
+def get_website_data(prompt):
     retriever_chain = get_context_retriever_chain(st.session_state.vector_store)
     conversation_rag_chain = get_conversational_rag_chain(retriever_chain)
 
     response = conversation_rag_chain.invoke({
         "chat_history": st.session_state.chat_history,
-        "input": user_input
+        "input": prompt
     })
     return response['answer']
-

@@ -13,6 +13,7 @@ if __name__ == "__main__":
         st.session_state['chat_history'] = [
             AIMessage(content="Hello, I am a bot. How can I brighten your day?")
         ]
+        # w dont want to re-embed the website data every we make a call so lets store it in state
     if 'vector_store' not in st.session_state:
         st.session_state['vector_store'] = ''
 
@@ -33,12 +34,6 @@ if __name__ == "__main__":
             # Append user prompt and response to chat history
             st.session_state.chat_history.append(HumanMessage(content=prompt))
             st.session_state.chat_history.append(AIMessage(content=response))
-            # retrieved_text = retriever_chain.invoke({
-			# 	"chat_history": st.session_state.chat_history,
-			# 	"input": "Tell me how"
-			# })
-            # with st.sidebar:
-            #       st.write(retrieved_text)
 
 
 	    # Display conversation history

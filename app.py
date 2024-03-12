@@ -2,10 +2,10 @@ import streamlit as st
 from utils import *
 # Use the schema below to tell LangChain one is AI and other is human
 from langchain_core.messages import AIMessage, HumanMessage
-__import__('pysqlite3')
-import sys
+# __import__('pysqlite3')
+# import sys
 
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 if __name__ == "__main__":
     st.set_page_config(page_title="Website Assistant", page_icon='🤖', layout='centered')

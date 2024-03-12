@@ -161,3 +161,4 @@ cython_debug/
 Pipfile
 Pipfile.lock
 sql_chat.py
+Chinook.sql

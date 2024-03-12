@@ -1,6 +1,7 @@
 langchain-openai
 langchain
 streamlit
+pysqlite3-binary
 chromadb
 beautifulsoup4
 langchain-community

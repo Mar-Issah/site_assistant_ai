@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 Pipfile
 Pipfile.lock
-sql_utils.py
+sql_chat.py
